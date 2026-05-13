@@ -472,27 +472,26 @@
                         </div>`;
                 } else if (slot.type === 'default') {
                     entitiesLayer.innerHTML += `
-                    <div id="${slot.id}" class="draggable entity-group" data-type="slot_default" data-id="${slot.id}" style="position: absolute; transform-origin: center center;">
-                        <div class="controls rotate-line" style="top: -15px; height: 15px; left: 50%; transform: translateX(-50%); position: absolute;"></div>
-                        <div class="controls rotate-handle" data-type="rotate-slot_default" data-id="${slot.id}" style="top: -20px; left: 50%; transform: translateX(-50%); position: absolute;"></div>
-                        <div style="width: 800px; height: 600px; border: 2px dashed rgba(255,255,255,0.5); box-sizing: border-box; position: relative;">
+                    <div id="${slot.id}" class="draggable entity-group" data-type="slot_default" data-id="${slot.id}" style="position: absolute; transform-origin: center center; z-index: 0; pointer-events: none;">
+                        <div class="controls rotate-line" style="top: -15px; height: 15px; left: 50%; transform: translateX(-50%); position: absolute; pointer-events: auto;"></div>
+                        <div class="controls rotate-handle" data-type="rotate-slot_default" data-id="${slot.id}" style="top: -20px; left: 50%; transform: translateX(-50%); position: absolute; pointer-events: auto;"></div>
+                        <div style="width: 800px; height: 600px; border: 2px dashed rgba(255,255,255,0.5); box-sizing: border-box; position: relative; pointer-events: none;">
                             <svg width="800" height="600" style="position: absolute; top:0; left:0; pointer-events: none;">
                                 <g opacity="0.85">
-                                    <line x1="0" y1="420" x2="800" y2="420" stroke="#ffffff" stroke-width="4"/>
-                                    <line x1="220" y1="420" x2="220" y2="600" stroke="#ffffff" stroke-width="4"/>
-                                    <line x1="310" y1="420" x2="310" y2="600" stroke="#ffffff" stroke-width="4"/>
-                                    <line x1="400" y1="420" x2="400" y2="600" stroke="#ffffff" stroke-width="4"/>
-                                    <line x1="490" y1="420" x2="490" y2="600" stroke="#ffffff" stroke-width="4"/>
-                                    <line x1="580" y1="420" x2="580" y2="600" stroke="#ffffff" stroke-width="4"/>
-                                    <line x1="200" y1="20" x2="600" y2="20" stroke="#ffffff" stroke-width="4"/>
-                                    <line x1="200" y1="110" x2="600" y2="110" stroke="#ffffff" stroke-width="4"/>
-                                    <line x1="200" y1="20" x2="200" y2="110" stroke="#ffffff" stroke-width="4"/>
-                                    <line x1="400" y1="20" x2="400" y2="110" stroke="#ffffff" stroke-width="4"/>
-                                    <line x1="600" y1="20" x2="600" y2="110" stroke="#ffffff" stroke-width="4"/>
+                                    <line x1="0" y1="420" x2="800" y2="420" stroke="#ffffff" stroke-width="4" style="pointer-events: stroke; cursor: grab;" class="slot-drag-line"/>
+                                    <line x1="220" y1="420" x2="220" y2="600" stroke="#ffffff" stroke-width="4" style="pointer-events: stroke; cursor: grab;" class="slot-drag-line"/>
+                                    <line x1="310" y1="420" x2="310" y2="600" stroke="#ffffff" stroke-width="4" style="pointer-events: stroke; cursor: grab;" class="slot-drag-line"/>
+                                    <line x1="400" y1="420" x2="400" y2="600" stroke="#ffffff" stroke-width="4" style="pointer-events: stroke; cursor: grab;" class="slot-drag-line"/>
+                                    <line x1="490" y1="420" x2="490" y2="600" stroke="#ffffff" stroke-width="4" style="pointer-events: stroke; cursor: grab;" class="slot-drag-line"/>
+                                    <line x1="580" y1="420" x2="580" y2="600" stroke="#ffffff" stroke-width="4" style="pointer-events: stroke; cursor: grab;" class="slot-drag-line"/>
+                                    <line x1="200" y1="20" x2="600" y2="20" stroke="#ffffff" stroke-width="4" style="pointer-events: stroke; cursor: grab;" class="slot-drag-line"/>
+                                    <line x1="200" y1="110" x2="600" y2="110" stroke="#ffffff" stroke-width="4" style="pointer-events: stroke; cursor: grab;" class="slot-drag-line"/>
+                                    <line x1="200" y1="20" x2="200" y2="110" stroke="#ffffff" stroke-width="4" style="pointer-events: stroke; cursor: grab;" class="slot-drag-line"/>
+                                    <line x1="400" y1="20" x2="400" y2="110" stroke="#ffffff" stroke-width="4" style="pointer-events: stroke; cursor: grab;" class="slot-drag-line"/>
+                                    <line x1="600" y1="20" x2="600" y2="110" stroke="#ffffff" stroke-width="4" style="pointer-events: stroke; cursor: grab;" class="slot-drag-line"/>
                                 </g>
                             </svg>
                         </div>
-                        <div style="position: absolute; top:0; left:0; width: 800px; height: 600px; background: transparent; cursor: grab;" class="slot-drag-overlay"></div>
                     </div>`;
                 }            });
 
@@ -710,7 +709,7 @@
             if (type === 'car' || type === 'rotate-car') return window.state.cars.find(c => c.id === id);
             if (type === 'obs_car' || type === 'rotate-obs_car') return window.state.obsCars.find(c => c.id === id);
             if (type === 'ped' || type === 'rotate-ped') return window.state.peds.find(p => p.id === id);
-            if (type.startsWith('slot_') || type.startsWith('rotate-slot_')) return window.state.slots.find(s => s.id === id);
+            if (type && (type.startsWith('slot_') || type.startsWith('rotate-slot_'))) return window.state.slots.find(s => s.id === id);
             if (type === 'curb' || type === 'rotate-curb') return window.state.curbs.find(c => c.id === id);
             if (type === 'cone' || type === 'rotate-cone') return window.state.cones.find(c => c.id === id);
             if (type === 'stopper' || type === 'rotate-stopper') return window.state.stoppers.find(s => s.id === id);
@@ -731,8 +730,11 @@
                 activeElement = { type: target.dataset.type, id: target.dataset.id };
                 dragType = 'rotate';
                 evt.preventDefault();
-            } else if (target.closest('.entity-group')) {
+            } else if (target.closest('.entity-group') && !target.classList.contains('slot-drag-line')) {
                 const group = target.closest('.entity-group');
+                // Ensure we don't accidentally drag the default slot when clicking inside it but not on its lines
+                if (group.dataset.type === 'slot_default') return;
+                
                 activeElement = { type: group.dataset.type, id: group.dataset.id };
                 dragType = 'move';
                 
@@ -743,6 +745,17 @@
                 }
                 if (!target.hasAttribute('contenteditable')) {
                     evt.preventDefault();
+                }
+            } else if (target.classList.contains('slot-drag-line')) {
+                // Handle Default Slots drag only when clicking precisely on the white lines
+                const group = target.closest('.entity-group');
+                activeElement = { type: group.dataset.type, id: group.dataset.id };
+                dragType = 'move';
+                
+                let item = findItem(activeElement.type, activeElement.id);
+                if (item) {
+                    offset.x = evt.clientX - item.x;
+                    offset.y = evt.clientY - item.y;
                 }
             } else if (target.classList.contains('handle')) {
                 activeElement = { type: 'handle', id: target.dataset.id, handleType: target.dataset.handle };
@@ -823,8 +836,22 @@
         document.addEventListener('dblclick', (evt) => {
             const target = evt.target;
             if (target.hasAttribute('contenteditable')) return;
+            
+            // If we double click exactly on the default slot white lines, we can delete it
+            if (target.classList.contains('slot-drag-line')) {
+                const entity = target.closest('.entity-group');
+                if (entity) {
+                    const id = entity.dataset.id;
+                    window.state.slots = window.state.slots.filter(s => s.id !== id);
+                    window.initDOM();
+                    window.render();
+                    return;
+                }
+            }
+            
+            // For other entities, prevent deleting if it's the background of default slot
             const entity = target.closest('.entity-group');
-            if (entity) {
+            if (entity && entity.dataset.type !== 'slot_default') {
                 const id = entity.dataset.id;
                 window.state.cars = window.state.cars.filter(c => c.id !== id);
                 window.state.obsCars = window.state.obsCars.filter(c => c.id !== id);
